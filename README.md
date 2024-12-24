@@ -1,3 +1,199 @@
+This project is a full-stack web application built using React.js for the frontend, Express.js for the backend, and MySQL as the database. It demonstrates the implementation of a 3-tier architecture, where the presentation layer (React.js), application logic layer (Express.js), and data layer (MySQL) are separated into distinct tiers. Below are the detailed steps to deploy this application on a cloud platform using two EC2 instances.
+
+Prerequisites
+
+Infrastructure Setup:
+
+Create 2 new EC2 instances (one for frontend and one for backend).
+
+Create a security group (SG) with appropriate inbound and outbound rules.
+
+Generate a key pair for secure SSH access.
+
+Set up a VPC with subnets for the instances.
+
+Instance Usage:
+
+Frontend Server: Host the React.js application and act as a bastion server to connect to the backend.
+
+Backend Server: Host the Express.js backend and MySQL database. Only allow connections from the bastion server.
+
+Bastion Server Setup
+
+Transfer Private Key: From the local machine, securely copy the private key of the backend server to the bastion server:
+
+scp -i <path-to-local-key> <path-to-backend-private-key> ec2-user@<bastion-server-ip>:<destination-path>
+
+Set Permissions: Ensure the key file is readable only by the owner:
+
+chmod 400 <key-file-path>
+
+SSH Access: Use the bastion server to SSH into the backend server:
+
+ssh -i <backend-private-key> ec2-user@<backend-server-ip>
+
+Frontend Server Setup (Ubuntu)
+
+Install Git:
+
+sudo apt update
+sudo apt install git -y
+
+Clone Repository:
+
+git clone https://github.com/GruhanthP/CRUD-bookkeeper-app.git
+
+Install Node Version Manager (NVM):
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+source ~/.bashrc
+
+Install Node.js:
+
+nvm install --lts
+node -e "console.log('Running Node.js ' + process.version)"
+
+Setup Frontend: Navigate to the frontend directory and install dependencies:
+
+cd CRUD-bookkeeper-app/frontend
+npm install
+
+Backend Server Setup (Ubuntu)
+
+Install Git and Clone Repository:
+
+sudo apt update
+sudo apt install git -y
+git clone https://github.com/GruhanthP/CRUD-bookkeeper-app.git
+
+Install Node.js and NVM: Repeat steps from the frontend server setup to install NVM and Node.js.
+
+Install MySQL:
+
+wget https://dev.mysql.com/get/mysql-apt-config_0.8.24-1_all.deb
+sudo dpkg -i mysql-apt-config_0.8.24-1_all.deb
+sudo apt update
+sudo apt install mysql-server -y
+sudo systemctl start mysql
+sudo systemctl enable mysql
+sudo grep 'temporary password' /var/log/mysql/error.log
+
+Set Up MySQL Root Password: If no temporary password is generated:
+
+sudo mysql -u root
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '<YourNewPassword>';
+FLUSH PRIVILEGES;
+EXIT;
+
+Secure MySQL Installation:
+
+sudo mysql_secure_installation
+
+Start Backend: Navigate to the backend directory and install dependencies:
+
+cd CRUD-bookkeeper-app/backend
+npm install
+pm2 start app.js
+
+Test API Connection: Use the following command to test the backend:
+
+curl http://localhost:<backend-port>/books
+
+Frontend Server Setup (RedHat)
+
+Install Git:
+
+sudo yum update -y
+sudo yum install git -y
+
+Clone Repository:
+
+git clone https://github.com/GruhanthP/CRUD-bookkeeper-app.git
+
+Install Node Version Manager (NVM):
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+source ~/.bashrc
+
+Install Node.js:
+
+nvm install --lts
+node -e "console.log('Running Node.js ' + process.version)"
+
+Setup Frontend: Navigate to the frontend directory and install dependencies:
+
+cd CRUD-bookkeeper-app/frontend
+npm install
+
+Backend Server Setup (RedHat)
+
+Install Git and Clone Repository:
+
+sudo yum update -y
+sudo yum install git -y
+git clone https://github.com/GruhanthP/CRUD-bookkeeper-app.git
+
+Install Node.js and NVM: Repeat steps from the frontend server setup to install NVM and Node.js.
+
+Install MySQL:
+
+wget https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+sudo rpm -Uvh mysql80-community-release-el9-1.noarch.rpm
+sudo yum install mysql-server -y
+sudo systemctl start mysqld
+sudo systemctl enable mysqld
+sudo grep 'temporary password' /var/log/mysqld.log
+
+Set Up MySQL Root Password: If no temporary password is generated:
+
+sudo mysql -u root
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '<YourNewPassword>';
+FLUSH PRIVILEGES;
+EXIT;
+
+Secure MySQL Installation:
+
+sudo mysql_secure_installation
+
+Start Backend: Navigate to the backend directory and install dependencies:
+
+cd CRUD-bookkeeper-app/backend
+npm install
+pm2 start app.js
+
+Test API Connection: Use the following command to test the backend:
+
+curl http://localhost:<backend-port>/books
+
+Nginx Setup (Optional)
+
+Install Nginx (Ubuntu):
+
+sudo apt update
+sudo apt install nginx -y
+
+Install Nginx (RedHat):
+
+sudo yum update -y
+sudo yum install nginx -y
+
+Configure Nginx: Update the Nginx configuration file to set the correct path for the frontend’s index.html file and use Nginx as a reverse proxy for the backend.
+
+Restart Nginx:
+
+sudo systemctl restart nginx
+
+Notes
+
+Security: Ensure that your security group allows only the required inbound traffic.
+
+Environment Variables: Update the backend configuration file with the correct MySQL root password.
+
+Database Connection: Verify the database connection string in the backend configuration.
+
+
+
+
 This project is a full-stack web application built using React js for the frontend, Express js for the backend, and MySQL as the database. The application is designed to demonstrate the implementation of a 3-tier architecture, where the presentation layer (React js), application logic layer (Express js), and data layer (MySQL) are separated into distinct tiers.
 We have a frontend reactjs application and backend nodejs with mysql db this has to be hosted on a cloud platform
 
